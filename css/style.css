@@ -1,0 +1,26 @@
+.hidden{
+	display:none;
+}
+a.next{
+	background:url(../img/next.png) no-repeat;
+	width:29px;
+	height:29px;
+	display:block;
+	cursor:pointer;
+	}
+.holiday span
+{
+	display:block;	
+}
+.tooltip{
+	
+}
+.content_tp{ 
+
+}
+.bottom_tp{
+	
+}
+.top_tp{
+	
+}
