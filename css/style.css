@@ -8,12 +8,18 @@ a.next{
 	display:block;
 	cursor:pointer;
 	}
-.holiday span
+.holiday span.ui-state-default
 {
-	display:block;	
+	display:block !important;	background:#F37F0D !important;	color:#431E0C !important;
+	
+}
+.ui-state-default
+{
+	background:#C6D797 !important;
 }
 .tooltip{
-	
+	position:absolute;
+	z-index:1000;
 }
 .content_tp{ 
 
@@ -23,4 +29,8 @@ a.next{
 }
 .top_tp{
 	
+}
+.clear
+{
+	clear:both;	
 }
