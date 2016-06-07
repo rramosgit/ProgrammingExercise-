@@ -78,27 +78,27 @@ class ApiCaller
 <script language="javascript" type="text/javascript" src="js/function_calendar_byme.js"></script>
 <script language="javascript">
 
-
-function httpGetAsync(theUrl, callback)
+var holidayDates = new Array();
+function loadHolidays(url)
 {
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() { 
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-            callback(xmlHttp.responseText);
-    }
-    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
-    xmlHttp.send(null);
-	 
-	return xmlHttp.responseText;
-	//make a loop and take only dates, return it
-	
+	 $.ajax({
+		  type: "GET",
+		  url: url,		 
+		  success: function(response) {
+			      holidays = response.holidays;
+			      $.each(holidays,function(i,holidate){
+					var dayArray = i.split('-');
+					var year = dayArray[0];
+					var day = dayArray[1];
+					var month = dayArray[2];
+				    var holy = month+"/"+day+"/"+year
+					holidayDates.push(holy);
+				  });
+			  }
+			  
+		});
 }
-var holidayDates = ['7/4/2015','7/4/2016','7/4/2017','7/4/2018'];
 $(document).ready(function() {
-
-
-
-
 
 	$(".next").click(function(){
 		
@@ -108,24 +108,27 @@ $(document).ready(function() {
 	}	
 	else
 	{
-	  var countrycode = $("#countrycode").attr('value');
-      var url = "http://holidayapi.com/v1/holidays?country="+countrycode;
 	  
-	    //var holidayDates = httpGetAsync(url);
-	   
-	   
-	   
 	  var start_date = new Date($("#start_date").attr('value'));
 	  var days = parseInt($("#days").attr('value'))-1;
 	  var end_date = new Date(start_date);
 	  end_date.setDate(start_date.getDate() + days);                            
-	  $("#end_date").val(end_date.getFullYear() + '-' + ("0" + (end_date.getMonth() + 1)).slice(-2) + '-' + ("0" + end_date.getDate()).slice(-2));		
+	  $("#end_date").val(end_date.getFullYear() + '-' + ("0" + (end_date.getMonth() + 1)).slice(-2) + '-' + ("0" + end_date.getDate()).slice(-2));	  
+	  var countrycode = $("#countrycode").attr('value');
+      var url = "http://holidayapi.com/v1/holidays?country="+countrycode+"&year="+start_date.getFullYear();
+	  
+	    loadHolidays(url);
 		
-	$("#calendar").datepicker({"dateFormat":"mm/dd/yy",minDate:start_date,maxDate:end_date,beforeShowDay: HolidayDates},$.datepicker.regional[ "es" ]);	
+	   if( start_date.getFullYear() != end_date.getFullYear() )
+	   {
+	       var url = "http://holidayapi.com/v1/holidays?country="+countrycode+"&year="+end_date.getFullYear();
+	  	   loadHolidays(url);
+	   }		
+		
+	$("#calendar").datepicker({"dateFormat":"mm/dd/yy",minDate:start_date,maxDate:end_date,beforeShowDay: HolidayDates},$.datepicker.regional[ "en" ]);	
 	
-	$(".holiday span").attr('tooltip','Holiday'); 
-	
-	
+	 
+		
 	$("#calendar").show();
 	}
 	});
@@ -136,14 +139,14 @@ $(document).ready(function() {
 <body>
 
 <form>
-<input type="text" id="start_date" name="start_date" value="" />
-<input type="text" id="days" name="days" value="" />
-<input type="text" id="countrycode" name="countrycode" value="" />
+<label > Start date: </label><input type="text" id="start_date" name="start_date" value="" />
+<label > Number of days: </label><input type="text" id="days" name="days" value="" />
+<label > Country Code:  </label><input type="text" id="countrycode" name="countrycode" value="" />
 
 <input type="text" id="end_date" name="end_date" value="" readonly="readonly" class="hidden" />
 
 <a class="next" ></a>
-<br class="clear;">
+<br class="clear">
 <label>"To Load Again click here !!"</label><input type="submit" value="Reload">
 <div  id="calendar"  class="hidden" > </div>
 </form>
